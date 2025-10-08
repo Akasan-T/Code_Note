@@ -1,2 +1,3 @@
-# Laravel_note
-ララベルを使ってノートを作成する
+# CodeNote
+
+### CodeNot概要
