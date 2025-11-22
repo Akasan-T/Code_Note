@@ -7,28 +7,17 @@ use App\Models\Label;
 
 class LabelController extends Controller
 {
-    public function create()
+    public function create(Request $request)
     {
-        $labels = Label::all()->map(function($label) {
-            $label->formatted_created_at = $label->created_at ? $label->created_at->format('Y-m-d H:i') : '';
-            return $label;
-    
-        });
-
         $label = null;
-
         $query = Label::query();
 
-        // 名前で検索
         if ($request->filled('keyword')) {
             $query->where('name', 'like', '%' . $request->keyword . '%');
         }
 
         $labels = $query->get();
-
-
-
-        return view('label.create', compact('labels'));
+        return view('label.create', compact('labels', 'label'));
     }
 
     public function store(Request $request)
@@ -61,30 +50,28 @@ class LabelController extends Controller
             'name' => $request->name,
             'color' => $request->color ?? $label->color,
         ]);
-        return redirect()->route('label.create')->with('success','ラベルを更新しました');
+
+        return redirect()->route('label.create')->with('success', 'ラベルを更新しました');
     }
 
     public function destroy(Label $label)
     {
         $label->delete();
-        return redirect()->route('label.create')->with('success','ラベルを消去しました');
+        return redirect()->route('label.create')->with('success', 'ラベルを消去しました');
     }
 
     public function index(Request $request)
     {
         $query = Label::query();
 
-        // 名前で検索
         if ($request->filled('keyword')) {
             $query->where('name', 'like', '%' . $request->keyword . '%');
         }
 
-        // 色で絞り込み
         if ($request->filled('color')) {
             $query->where('color', $request->color);
         }
 
-        // 一覧取得 & 日付整形
         $labels = $query->get()->map(function ($label) {
             $label->formatted_created_at = $label->created_at
                 ? $label->created_at->format('Y-m-d H:i')
@@ -92,7 +79,6 @@ class LabelController extends Controller
             return $label;
         });
 
-        return view('label.create', compact('labels')); // 作成フォーム兼一覧表示
+        return view('label.create', compact('labels'));
     }
-
 }
