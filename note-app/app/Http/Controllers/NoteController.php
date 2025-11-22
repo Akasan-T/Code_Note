@@ -116,13 +116,13 @@ class NoteController extends Controller
     public function uploadImage(Request $request)
     {
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('uploads','public');
-            return $request()->json([
+            $path = $request->file('image')->store('uploads', 'public');
+            return response()->json([
                 'url' => asset('storage/' . $path)
             ]);
         }
 
-        return response()->json(['error' => 'No image uploaded'],400);
+        return response()->json(['error' => 'No image uploaded'], 400);
     }
 
 }

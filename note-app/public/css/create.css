@@ -90,11 +90,21 @@ select{
     width: 670px;
 }
 
-.edit_keep_button,.edit_back_button{
-    margin-top: 20px;
+.edit_back_button{
+    margin-top: 30px;
+}
+
+.edit_keep_button{
+    margin-top: 19px;
 }
 
 .pas{
     margin-bottom: 30px;
     
 }
+
+.button_box{
+    display: flex;
+    gap:0 20px;
+}
+
