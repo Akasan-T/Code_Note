@@ -112,4 +112,17 @@ class NoteController extends Controller
         return redirect()->route('notes.index')
             ->with('success','ノートを消去しました');
     }
+
+    public function uploadImage(Request $request)
+    {
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('uploads','public');
+            return $request()->json([
+                'url' => asset('storage/' . $path)
+            ]);
+        }
+
+        return response()->json(['error' => 'No image uploaded'],400);
+    }
+
 }

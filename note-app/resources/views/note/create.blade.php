@@ -8,13 +8,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/idea.min.css">
     <link rel="stylesheet" href="{{ asset('/css/style.css')  }}" >
-    <link rel="stylesheet" href="{{ asset('/css/create.css')  }}" >
+    <link rel="stylesheet" href="{{ asset('/css/create.css')  }}" > 
 </head>
 <body>
     <header>
         <h1><a href="{{ route('note') }}">CodeNote</a></h1>
     </header>
-    <form method="POST" action="{{ route('notes.store') }}">
+    <p>ここに文字が出れば Blade は表示されている</p> 
+    <form method="POST" action="{{ route('notes.store') }}" enctype="multipart/form-data">
         <div class="editor-container">
             <!-- Markdown入力側 -->
             <div class="editor">
@@ -25,6 +26,8 @@
                 <textarea id="editor" name="content"></textarea>
                 <br>
                 <button type="submit">保存</button>
+                <label for="imageUpload">画像アップロード</label>
+                <input type="file" id="imageUpload" accept="image/*">
             </div>
 
             <!-- プレビュー側 -->
@@ -104,6 +107,39 @@
 
             document.getElementById("preview").innerHTML = marked.parse(highlighted);
         });
+
+        document.getElementById("imageUpload").addEventListener("change", function(){
+            
+            const file = this.files[0];
+            if (!file) return;
+
+            const fromData = new FormData();
+            fromData.append("image",file);
+            fromData.append("_token", "{{ csrf_token() }}");
+
+            fetch("{{ route('image.upload') }}", {
+                method: "POST",
+                body: fromData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.url) {
+                    // markdownに挿入
+                    const markdown = '\n![](${data.url}\n';
+                    const doc = editor.getDoc();
+                    const cursor = doc.getCursor();
+
+                    doc.replaceRange(markdown, cursor);
+
+                    updatePreview();
+                }
+            })
+            .catch(err => console.error(err));
+        });
+
+        document.getElementById("imageUploadButton").addEventListener("click", function() {
+            document.getElementById("imageUpload").click();
+        }); 
     </script>
 </body>
 </html>

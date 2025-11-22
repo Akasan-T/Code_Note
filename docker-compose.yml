@@ -1,10 +1,19 @@
+version: "3.9"
+
 services:
   app:
     build: ./
-    volumes:
-      - .:/workdir
     ports:
       - 9000:9000
+    environment:
+      # Laravel 用の環境変数例
+      APP_ENV: local
+      APP_DEBUG: 1
+    # 開発時のみ有効
+    volumes:
+      # - ./note-app:/workdir/note-app
+      - ./note-app/vendor:/workdir/note-app/vendor
+
   db:
     image: mysql:8.3
     volumes:
