@@ -14,7 +14,7 @@
     <header>
         <h1><a href="{{ route('note') }}">CodeNote</a></h1>
     </header>
-    <form method="POST" action="{{ route('notes.store') }}" enctype="multipart/form-data">
+    <form id="noteForm" method="POST" action="{{ route('notes.store') }}" enctype="multipart/form-data">
         <div class="editor-container">
             <!-- Markdown入力側 -->
             <div class="editor">
@@ -132,6 +132,7 @@
     // =============================
     // 画像アップロード
     // =============================
+    const csrfToken = '{{ csrf_token() }}';
     const imageInput = document.getElementById('imageUpload');
     const uploadButton = document.getElementById('imageUploadButton');
 
@@ -154,16 +155,42 @@
         .then(res => res.json())
         .then(data => {
             if (data.url) {
+                // Markdown形式で挿入
                 const markdown = `\n![](${data.url})\n`;
                 const doc = editor.getDoc();
                 const cursor = doc.getCursor();
+
+                // カーソル位置に挿入
                 doc.replaceRange(markdown, cursor);
+
+                // 画像挿入後すぐにプレビュー更新
                 updatePreview();
             } else {
                 alert('アップロード失敗');
             }
         })
         .catch(err => console.error(err));
+    });
+    
+    const form = document.getElementById('noteForm');
+    form.addEventListener('submit', function(e) {
+        const title = document.getElementById('title').value.trim();
+        const content = editor.getValue().trim(); // CodeMirror の内容取得
+
+        if(title === '') {
+            e.preventDefault();
+            alert('タイトルを入力してください');
+            return;
+        }
+
+        if(content === '') {
+            e.preventDefault();
+            alert('内容を入力してください');
+            return;
+        }
+
+        // CodeMirror の内容を textarea に書き戻す
+        document.getElementById('editor').value = content;
     });
 </script>
 </body>

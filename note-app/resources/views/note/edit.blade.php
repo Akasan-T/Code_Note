@@ -13,7 +13,7 @@
 <header>
     <h1><a href="{{ route('note') }}">CodeNote</a></h1>
 </header> 
-<form method="POST" action="{{ route('notes.update', $note->id) }}">
+<form method="POST" id="noteForm" action="{{ route('notes.update', $note->id) }}">
     @csrf
     @method('PUT')
         <div class="editor-container" >
@@ -162,6 +162,27 @@
             }
         })
         .catch(err => console.error(err));
+    });
+
+    const form = document.getElementById('noteForm');
+    form.addEventListener('submit', function(e) {
+        const title = document.getElementById('title').value.trim();
+        const content = editor.getValue().trim(); // CodeMirror の内容取得
+
+        if(title === '') {
+            e.preventDefault();
+            alert('タイトルを入力してください');
+            return;
+        }
+
+        if(content === '') {
+            e.preventDefault();
+            alert('内容を入力してください');
+            return;
+        }
+
+        // CodeMirror の内容を textarea に書き戻す
+        document.getElementById('editor').value = content;
     });
     </script>
 </body>

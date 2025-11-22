@@ -36,3 +36,6 @@ Route::get('/labels/{label}/edit', [LabelController::class, 'edit'])->name('labe
 Route::put('/labels/{label}', [LabelController::class, 'update'])->name('labels.update');
 Route::delete('/labels/{label}', [LabelController::class, 'destroy'])->name('labels.destroy');
 Route::post('/upload-image',[NoteController::class, 'uploadImage'])->name('image.upload');
+Route::middleware('web')->group(function() {
+    Route::post('/upload-image', [NoteController::class, 'uploadImage'])->name('image.upload');
+});

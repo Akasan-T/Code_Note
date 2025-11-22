@@ -108,3 +108,10 @@ select{
     gap:0 20px;
 }
 
+
+#preview img {
+    max-width: 100%;   /* 横幅はコンテナに合わせる */
+    height: auto;      /* 高さは自動調整 */
+    display: block;
+    margin: 10px 0;
+}
